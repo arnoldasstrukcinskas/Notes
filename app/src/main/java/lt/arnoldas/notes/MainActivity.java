@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private ArrayAdapter<Note> adapter;
+    private ArrayList<Note> notes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +28,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ArrayList<Note> list = new ArrayList<>();
-
-        generateDummyNotes(25);
-
-        list.addAll(generateDummyNotes(25));
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-
-        binding.notesListView.setAdapter(adapter);
+        setupListView();
 
         //PAVYZDYS
 //        binding.myTextView.setTextSize(55);
@@ -47,16 +40,13 @@ public class MainActivity extends AppCompatActivity {
 //        myTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
     }
 
-    private List<Note> generateDummyNotes(int notesNumber) {
-        ArrayList<Note> notes = new ArrayList<>();
-        for (int i = 1; i <= notesNumber; i++) {
-            notes.add(new Note(
-                            i,
-                            UUID.randomUUID().toString().substring(0, 10),
-                            UUID.randomUUID().toString()
-                    )
-            );
-        }
-        return notes;
+    private void setupListView() {
+
+        notes = new ArrayList<>();
+        notes.addAll(UseCaseRepository.generateDummyNotes(25));
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
+        binding.notesListView.setAdapter(adapter);
     }
+
 }
