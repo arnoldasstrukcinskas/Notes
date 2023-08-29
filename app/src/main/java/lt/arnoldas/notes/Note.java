@@ -3,6 +3,7 @@ package lt.arnoldas.notes;
 import androidx.annotation.NonNull;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Note {
 
@@ -11,6 +12,7 @@ public class Note {
     private String description;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Note(){
     }
@@ -18,7 +20,7 @@ public class Note {
     public Note(
             int id,
             String title,
-            String description,
+            String description
     ) {
         this.id = id;
         this.title = title;
@@ -61,11 +63,11 @@ public class Note {
     @Override
     public String toString() {
         return String.format(
-                "Title: %s\n Description: \n%s\n%s\n%s",
+                "Title: %s\n Description: \n%s\nCreation Time: %s\nUpdate Time: %s",
                 this.title,
                 this.description,
-                this.creationDate,
-                this.updateDate
+                this.creationDate.format(formatter),
+                this.updateDate.format(formatter)
         );
     }
 }
