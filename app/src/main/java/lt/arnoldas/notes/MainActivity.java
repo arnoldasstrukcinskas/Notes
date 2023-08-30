@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 
 import lt.arnoldas.notes.databinding.ActivityMainBinding;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setupListView();
         setUpListViewItemClick();
         setUpListViewItemLongClick();
+        setUpFloatingActionButtonClick();
 
         //PAVYZDYS
 //        binding.myTextView.setTextSize(55);
@@ -61,10 +64,17 @@ public class MainActivity extends AppCompatActivity {
     private void setUpListViewItemLongClick() {
         binding.notesListView.setOnItemLongClickListener(
                 (adapterView, view, position, l) -> {
-                    Log.i(TAG, "OnListItem_Long_Clicked: " + adapterView.getItemAtPosition(position));
                     Note note = (Note) adapterView.getItemAtPosition(position);
                     showItemRemoveAlertDialog(note);
                     return true;
+                }
+        );
+    }
+
+    private void setUpFloatingActionButtonClick() {
+        binding.floatingActionButton.setOnClickListener(
+                view -> {
+                    showSnackBar("Floating action button was clicked");
                 }
         );
     }
@@ -73,15 +83,26 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
                 .setMessage("Do you really want to remove this item?")
-                .setPositiveButton("Yes",(dialogInterface, i) -> {
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
                     removeNoteFromList(note);
                 })
                 .setNegativeButton("No", null)
                 .show();
     }
 
+    private void showSnackBar(String message) {
+        Snackbar
+                .make(
+                        binding.notesListView,
+                        message,
+                        Snackbar.LENGTH_LONG
+                )
+                .show();
+    }
+
     private void removeNoteFromList(Note note) {
         notes.remove(note);
         adapter.notifyDataSetChanged();
+        showSnackBar("Note with id(): " + note.getId() + " was removed");
     }
 }
