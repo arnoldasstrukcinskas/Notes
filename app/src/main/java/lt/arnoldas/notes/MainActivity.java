@@ -4,16 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 import lt.arnoldas.notes.databinding.ActivityMainBinding;
 
@@ -32,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupListView();
-        
-        setUpListViewClickListener();
+        setUpListViewItemClick();
+        setUpListViewItemLongClick();
 
         //PAVYZDYS
 //        binding.myTextView.setTextSize(55);
@@ -54,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         binding.notesListView.setAdapter(adapter);
     }
 
-    private void setUpListViewClickListener() {
+    private void setUpListViewItemClick() {
         binding.notesListView.setOnItemClickListener(
                 (adapterView, view, position, l) -> {
 
@@ -64,4 +57,12 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    private void setUpListViewItemLongClick() {
+        binding.notesListView.setOnItemLongClickListener(
+                (adapterView, view, position, l) -> {
+                    Log.i(TAG, "OnListItem_Long_Clicked: " + adapterView.getItemAtPosition(position));
+                    return true;
+                }
+        );
+    }
 }
