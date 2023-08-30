@@ -2,6 +2,7 @@ package lt.arnoldas.notes;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -61,8 +62,26 @@ public class MainActivity extends AppCompatActivity {
         binding.notesListView.setOnItemLongClickListener(
                 (adapterView, view, position, l) -> {
                     Log.i(TAG, "OnListItem_Long_Clicked: " + adapterView.getItemAtPosition(position));
+                    Note note = (Note) adapterView.getItemAtPosition(position);
+                    showItemRemoveAlertDialog(note);
                     return true;
                 }
         );
+    }
+
+    private void showItemRemoveAlertDialog(Note note) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setMessage("Do you really want to remove this item?")
+                .setPositiveButton("Yes",(dialogInterface, i) -> {
+                    removeNoteFromList(note);
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void removeNoteFromList(Note note) {
+        notes.remove(note);
+        adapter.notifyDataSetChanged();
     }
 }
