@@ -3,7 +3,9 @@ package lt.arnoldas.notes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import lt.arnoldas.notes.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "my_notes_main_activity";
     private ActivityMainBinding binding;
     private ArrayAdapter<Note> adapter;
     private ArrayList<Note> notes;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupListView();
+        
+        setUpListViewClickListener();
 
         //PAVYZDYS
 //        binding.myTextView.setTextSize(55);
@@ -47,6 +52,16 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
         binding.notesListView.setAdapter(adapter);
+    }
+
+    private void setUpListViewClickListener() {
+        binding.notesListView.setOnItemClickListener(
+                (adapterView, view, position, l) -> {
+
+                    Log.i(TAG, "OnListItemClicked: " + adapterView.getItemAtPosition(position));
+                    Log.i(TAG, "OnListItemClicked: " + position);
+                }
+        );
     }
 
 }

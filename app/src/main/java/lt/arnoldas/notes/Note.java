@@ -63,7 +63,8 @@ public class Note {
     @Override
     public String toString() {
         return String.format(
-                "Title: %s\n Description: \n%s\nCreation Time: %s\nUpdate Time: %s",
+                "id: %s \nTitle: %s\n Description: \n%s\nCreation Time: %s\nUpdate Time: %s",
+                this.id,
                 this.title,
                 this.description,
                 this.creationDate.format(formatter),
