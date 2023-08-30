@@ -3,6 +3,8 @@ package lt.arnoldas.notes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -55,10 +57,37 @@ public class MainActivity extends AppCompatActivity {
         binding.notesListView.setOnItemClickListener(
                 (adapterView, view, position, l) -> {
 
-                    Log.i(TAG, "OnListItemClicked: " + adapterView.getItemAtPosition(position));
-                    Log.i(TAG, "OnListItemClicked: " + position);
+//                    Log.i(TAG, "OnListItemClicked: " + adapterView.getItemAtPosition(position));
+//                    Log.i(TAG, "OnListItemClicked: " + position);
+                Note note = (Note) adapterView.getItemAtPosition(position);
+                    openNoteDetailsActivity(note);
                 }
         );
+    }
+
+    private void openNoteDetailsActivity(Note note) {
+        Intent intent = new Intent(this, NoteDetails.class);
+        intent.putExtra("id", note.getId());
+        intent.putExtra("Title", note.getTitle());
+        intent.putExtra("Description", note.getDescription());
+        intent.putExtra("Creation Date", note.getCreationDate());
+        intent.putExtra("Update Date", note.getUpdateDate());
+        startActivity(intent);
+
+// Siuncia zinute per pasisinkta programa
+//        Intent sendIntent = new Intent();
+//        sendIntent.setAction(Intent.ACTION_SEND);
+//        sendIntent.putExtra(Intent.EXTRA_TEXT, note.toString());
+//        sendIntent.setType("text/plain");
+//
+//        Intent shareIntent = Intent.createChooser(sendIntent, null);
+//        startActivity(shareIntent);
+
+// Pajungia video youtubei
+//        String videoId = "0xB3T4MPEr0";
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+videoId));
+//        intent.putExtra("VIDEO_ID", videoId);
+//        startActivity(intent);
     }
 
     private void setUpListViewItemLongClick() {
@@ -74,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpFloatingActionButtonClick() {
         binding.floatingActionButton.setOnClickListener(
                 view -> {
-                    showSnackBar("Floating action button was clicked");
+                    openNoteDetailsActivity(new Note());
                 }
         );
     }
