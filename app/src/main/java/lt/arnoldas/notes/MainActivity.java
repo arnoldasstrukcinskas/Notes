@@ -1,7 +1,13 @@
 package lt.arnoldas.notes;
 
+import static androidx.activity.result.contract.ActivityResultContracts.GetContent;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void openNoteDetailsActivity(Note note) {
         Intent intent = new Intent(this, NoteDetails.class);
         intent.putExtra("note", note);
-        startActivity(intent);
+        startActivityForReturn.launch(intent);
 
 //        intent.putExtra("id", note.getId());
 //        intent.putExtra("Title", note.getTitle());
@@ -136,4 +142,17 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         showSnackBar("Note with id(): " + note.getId() + " was removed");
     }
+
+    ActivityResultLauncher<Intent> startActivityForReturn = registerForActivityResult(
+           new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Note note = (Note) data.getParcelableExtra("note_object_return");
+                        Log.i(TAG, "Returned Note: " + note.toString());
+                    }
+                }
+            }
+    );
 }
