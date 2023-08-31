@@ -67,12 +67,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void openNoteDetailsActivity(Note note) {
         Intent intent = new Intent(this, NoteDetails.class);
-        intent.putExtra("id", note.getId());
-        intent.putExtra("Title", note.getTitle());
-        intent.putExtra("Description", note.getDescription());
-        intent.putExtra("Creation Date", note.getCreationDate());
-        intent.putExtra("Update Date", note.getUpdateDate());
+        intent.putExtra("note", note);
         startActivity(intent);
+
+//        intent.putExtra("id", note.getId());
+//        intent.putExtra("Title", note.getTitle());
+//        intent.putExtra("Description", note.getDescription());
+//        intent.putExtra("Creation Date", note.getCreationDate());
+//        intent.putExtra("Update Date", note.getUpdateDate());
 
 // Siuncia zinute per pasisinkta programa
 //        Intent sendIntent = new Intent();
