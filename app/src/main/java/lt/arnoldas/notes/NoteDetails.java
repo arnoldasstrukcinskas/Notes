@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 import lt.arnoldas.notes.databinding.ActivityNoteDetailsBinding;
 
@@ -28,6 +29,8 @@ public class NoteDetails extends AppCompatActivity {
             noteId = intent.getIntExtra("noteId", 0);
         }
         displayNoteDetails(noteId);
+
+        setUpSaveButton();
 //        int id = intent.getIntExtra("id", 0);
 //        String title = intent.getStringExtra("Title");
 //        String description = intent.getStringExtra("Description");
@@ -41,7 +44,7 @@ public class NoteDetails extends AppCompatActivity {
 
     private void displayNoteDetails(int noteId) {
 
-        if(noteId == 0){
+        if (noteId == 0) {
             note = new Note();
         } else {
             getNoteFromRepository(noteId);
@@ -62,5 +65,52 @@ public class NoteDetails extends AppCompatActivity {
                 .filter(note -> note.getId() == noteId)
                 .findFirst()
                 .get();
+    }
+
+    private void setUpSaveButton() {
+        binding.saveButton.setOnClickListener(
+                v -> {
+                    addValuesToNote();
+                    if (note.getId() == 0) {
+                        saveNewNote();
+                    } else {
+                        updateNote();
+                    }
+                    finish();
+                }
+        );
+    }
+
+    private void addValuesToNote() {
+        note.setTitle(
+                binding.noteNameEditText.getText().toString()
+        );
+        note.setDescription(
+                binding.noteContentEditText.getText().toString()
+        );
+    }
+
+    private void saveNewNote() {
+        int maxId = UseCaseRepository.notes.stream()
+                .max(Comparator.comparing(Note::getId))
+                .get()
+                .getId();
+
+        UseCaseRepository.notes.add(
+                new Note(
+                        maxId + 1,
+                        note.getTitle(),
+                        note.getDescription()
+                )
+        );
+    }
+
+    private void updateNote() {
+        Note newNote = UseCaseRepository.notes.stream()
+                .filter(oldNote -> oldNote.getId() == note.getId())
+                .findFirst()
+                .get();
+        newNote.setTitle(note.getTitle());
+        newNote.setDescription(note.getDescription());
     }
 }

@@ -45,8 +45,18 @@ public class MainActivity extends AppCompatActivity {
 //        myTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        setupListView();
+    }
+
+
     private void setupListView() {
-        UseCaseRepository.generateDummyNotes(25);
+
+        if (UseCaseRepository.notes.isEmpty()) {
+            UseCaseRepository.generateDummyNotes(25);
+        }
 
         notes = UseCaseRepository.notes;
 
