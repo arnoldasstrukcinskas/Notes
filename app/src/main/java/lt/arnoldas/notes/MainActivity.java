@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import lt.arnoldas.notes.databinding.ActivityMainBinding;
 
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "my_notes_main_activity";
     private ActivityMainBinding binding;
     private ArrayAdapter<Note> adapter;
-    private ArrayList<Note> notes;
+    private List<Note> notes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupListView() {
+        UseCaseRepository.generateDummyNotes(25);
 
-        notes = new ArrayList<>();
-        notes.addAll(UseCaseRepository.generateDummyNotes(25));
+        notes = UseCaseRepository.notes;
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
         binding.notesListView.setAdapter(adapter);
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private void setUpListViewItemClick() {
         binding.notesListView.setOnItemClickListener(
                 (adapterView, view, position, l) -> {
-
 //                    Log.i(TAG, "OnListItemClicked: " + adapterView.getItemAtPosition(position));
 //                    Log.i(TAG, "OnListItemClicked: " + position);
                 Note note = (Note) adapterView.getItemAtPosition(position);
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openNoteDetailsActivity(Note note) {
         Intent intent = new Intent(this, NoteDetails.class);
-        intent.putExtra("note", note);
+        intent.putExtra("noteId", note.getId());
         startActivity(intent);
 
 //        intent.putExtra("id", note.getId());
