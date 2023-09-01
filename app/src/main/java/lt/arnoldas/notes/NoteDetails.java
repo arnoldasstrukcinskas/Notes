@@ -10,11 +10,16 @@ import java.util.Comparator;
 
 import lt.arnoldas.notes.databinding.ActivityNoteDetailsBinding;
 
-public class NoteDetails extends AppCompatActivity {
+public class NoteDetails extends BaseActivity {
 
     private ActivityNoteDetailsBinding binding;
     private Note note;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private String demoResult;
+
+    public NoteDetails() {
+        super("NoteDetails", "tst_lfc_note_details_activity");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,14 @@ public class NoteDetails extends AppCompatActivity {
         displayNoteDetails(noteId);
 
         setUpSaveButton();
+        print("demoResult: " + demoResult);
+
+       binding.noteNameEditText.setOnFocusChangeListener(
+               (view, b) -> {
+           demoResult = binding.noteNameEditText.getText().toString();
+           print("demoResult: " + demoResult);
+       }
+       );
 //        int id = intent.getIntExtra("id", 0);
 //        String title = intent.getStringExtra("Title");
 //        String description = intent.getStringExtra("Description");
