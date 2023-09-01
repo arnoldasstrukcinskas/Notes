@@ -2,15 +2,14 @@ package lt.arnoldas.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 
 import lt.arnoldas.notes.databinding.ActivityNoteDetailsBinding;
+import lt.arnoldas.notes.repository.MainDatabase;
+import lt.arnoldas.notes.repository.NoteDao;
 
 public class NoteDetails extends BaseActivity {
 
@@ -19,6 +18,7 @@ public class NoteDetails extends BaseActivity {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private String demoResult;
     private final String SAVE_INSTANCE_KEY = "note_details_save_instance_key";
+    private NoteDao noteDao;
 
     public NoteDetails() {
         super("NoteDetails", "tst_lfc_note_details_activity");
@@ -30,14 +30,20 @@ public class NoteDetails extends BaseActivity {
         binding = ActivityNoteDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        noteDao = MainDatabase.getInstance(getApplicationContext()).noteDao();
+
         Intent intent = getIntent();
         int noteId = 0;
 
         if (intent.getExtras() != null) {
             noteId = intent.getIntExtra("noteId", 0);
+            note = noteDao.getById(noteId);
+            if(note == null) note = new Note();
+        } else {
+            note = new Note();
         }
-        displayNoteDetails(noteId);
 
+        displayNoteDetails();
         setUpSaveButton();
 
 //        if(savedInstanceState != null){
@@ -46,12 +52,12 @@ public class NoteDetails extends BaseActivity {
 
         print("onCreate demoResult: " + demoResult);
 
-       binding.noteNameEditText.setOnFocusChangeListener(
-               (view, b) -> {
-           demoResult = binding.noteNameEditText.getText().toString();
-           print("onFocus demoResult: " + demoResult);
-       }
-       );
+        binding.noteNameEditText.setOnFocusChangeListener(
+                (view, b) -> {
+                    demoResult = binding.noteNameEditText.getText().toString();
+                    print("onFocus demoResult: " + demoResult);
+                }
+        );
 //        int id = intent.getIntExtra("id", 0);
 //        String title = intent.getStringExtra("Title");
 //        String description = intent.getStringExtra("Description");
@@ -78,13 +84,7 @@ public class NoteDetails extends BaseActivity {
         outState.putString(SAVE_INSTANCE_KEY, demoResult);
     }
 
-    private void displayNoteDetails(int noteId) {
-
-        if (noteId == 0) {
-            note = new Note();
-        } else {
-            getNoteFromRepository(noteId);
-        }
+    private void displayNoteDetails() {
         binding.noteIdTextView.setText(String.valueOf(note.getId()));
         binding.noteNameEditText.setText(note.getTitle());
         binding.noteContentEditText.setText(note.getDescription());
@@ -97,56 +97,40 @@ public class NoteDetails extends BaseActivity {
     }
 
     private void getNoteFromRepository(int noteId) {
-        note = UseCaseRepository.notes.stream()
-                .filter(note -> note.getId() == noteId)
-                .findFirst()
-                .get();
+//        note = UseCaseRepository.notes.stream()
+//                .filter(note -> note.getId() == noteId)
+//                .findFirst()
+//                .get();
     }
 
     private void setUpSaveButton() {
         binding.saveButton.setOnClickListener(
                 v -> {
-                    addValuesToNote();
-                    if (note.getId() == 0) {
-                        saveNewNote();
-                    } else {
-                        updateNote();
-                    }
+                    saveNote();
                     finish();
                 }
         );
     }
 
-    private void addValuesToNote() {
+    private void saveNote() {
         note.setTitle(
                 binding.noteNameEditText.getText().toString()
         );
         note.setDescription(
                 binding.noteContentEditText.getText().toString()
         );
-    }
-
-    private void saveNewNote() {
-        int maxId = UseCaseRepository.notes.stream()
-                .max(Comparator.comparing(Note::getId))
-                .get()
-                .getId();
-
-        UseCaseRepository.notes.add(
-                new Note(
-                        maxId + 1,
-                        note.getTitle(),
-                        note.getDescription()
-                )
-        );
-    }
-
-    private void updateNote() {
-        Note newNote = UseCaseRepository.notes.stream()
-                .filter(oldNote -> oldNote.getId() == note.getId())
-                .findFirst()
-                .get();
-        newNote.setTitle(note.getTitle());
-        newNote.setDescription(note.getDescription());
+        noteDao.insertNote(note);
+//        int maxId = UseCaseRepository.notes.stream()
+//                .max(Comparator.comparing(Note::getId))
+//                .get()
+//                .getId();
+//
+//        UseCaseRepository.notes.add(
+//                new Note(
+//                        maxId + 1,
+//                        note.getTitle(),
+//                        note.getDescription()
+//                )
+//        );
     }
 }

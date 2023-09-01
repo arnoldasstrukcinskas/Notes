@@ -128,7 +128,8 @@ public class MainActivity extends BaseActivity {
     private void setUpFloatingActionButtonClick() {
         binding.floatingActionButton.setOnClickListener(
                 view -> {
-                    openNoteDetailsActivity(new Note());
+                    Intent intent = new Intent(this, NoteDetails.class);
+                    startActivity(intent);
                 }
         );
     }
@@ -138,7 +139,7 @@ public class MainActivity extends BaseActivity {
         builder
                 .setMessage("Do you really want to remove this item?")
                 .setPositiveButton("Yes", (dialogInterface, i) -> {
-                    removeNoteFromList(note);
+                    deleteNote(note);
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -154,7 +155,8 @@ public class MainActivity extends BaseActivity {
                 .show();
     }
 
-    private void removeNoteFromList(Note note) {
+    private void deleteNote(Note note) {
+        noteDao.delete(note);
         notes.remove(note);
         adapter.notifyDataSetChanged();
         showSnackBar("Note with id(): " + note.getId() + " was removed");
