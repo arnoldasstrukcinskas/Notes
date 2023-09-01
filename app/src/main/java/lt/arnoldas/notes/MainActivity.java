@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lt.arnoldas.notes.databinding.ActivityMainBinding;
+import lt.arnoldas.notes.repository.MainDatabase;
+import lt.arnoldas.notes.repository.NoteDao;
 
 public class MainActivity extends BaseActivity {
 
@@ -22,6 +24,8 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding binding;
     private ArrayAdapter<Note> adapter;
     private List<Note> notes;
+
+    private NoteDao noteDao;
 
     public MainActivity() {
         super("MainActivity", "tst_lfc_main_activity");
@@ -33,6 +37,7 @@ public class MainActivity extends BaseActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
 
         setupListView();
         setUpListViewItemClick();
@@ -50,7 +55,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         setupListView();
     }
@@ -58,11 +63,15 @@ public class MainActivity extends BaseActivity {
 
     private void setupListView() {
 
-        if (UseCaseRepository.notes.isEmpty()) {
-            UseCaseRepository.generateDummyNotes(25);
-        }
+        noteDao = MainDatabase
+                .getInstance(getApplicationContext())
+                .noteDao();
 
-        notes = UseCaseRepository.notes;
+        if (noteDao.getAll().isEmpty()) {
+            UseCaseRepository.generateDummyNotes(25);
+            noteDao.insertNotes(UseCaseRepository.notes);
+        }
+        notes = noteDao.getAll();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
         binding.notesListView.setAdapter(adapter);
@@ -73,7 +82,7 @@ public class MainActivity extends BaseActivity {
                 (adapterView, view, position, l) -> {
 //                    Log.i(TAG, "OnListItemClicked: " + adapterView.getItemAtPosition(position));
 //                    Log.i(TAG, "OnListItemClicked: " + position);
-                Note note = (Note) adapterView.getItemAtPosition(position);
+                    Note note = (Note) adapterView.getItemAtPosition(position);
                     openNoteDetailsActivity(note);
                 }
         );
